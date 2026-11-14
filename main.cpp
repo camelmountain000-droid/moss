@@ -47,6 +47,25 @@ string mood(long long d) {
     return "ancient moss. it's never too late to say hello.";
 }
 
+void share(const vector<Person>& v, long long now) {
+    if (v.empty()) { cout << "add someone first: moss add Ali\n"; return; }
+    long long worst = 0;
+    int mossy = 0;
+    for (const auto& p : v) {
+        long long d = (now - p.t) / 86400;
+        if (d < 0) d = 0;
+        if (d > worst) worst = d;
+        if (d >= 8) mossy++;
+    }
+    string bar(static_cast<size_t>(min<long long>(worst / 2, 30)), '"');
+    cout << "\n  ~ my moss report ~\n\n";
+    cout << "  people:       " << v.size() << "\n";
+    cout << "  mossiest:     " << worst << " days\n";
+    cout << "  mossy (8d+):  " << mossy << "\n\n";
+    cout << "  \033[32m" << bar << "\033[0m\n\n";
+    cout << "  Gerald says: " << mood(worst) << "\n\n";
+}
+
 int main(int argc, char** argv) {
     long long now = (long long)time(nullptr);
     vector<string> args(argv + 1, argv + argc);
@@ -72,6 +91,8 @@ int main(int argc, char** argv) {
         }
         if (found) { save(people); cout << "moss cleared. good human.\n"; }
         else cout << "no one by that name. try: moss add NAME\n";
+    } else if (cmd == "share") {
+        share(people, now);
     } else if (cmd == "rm") {
         string name = args.size() > 1 ? lower(args[1]) : "";
         size_t before = people.size();
